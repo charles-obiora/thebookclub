@@ -25,6 +25,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { BookOpen, Mail, Lock, User } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -54,6 +55,16 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export default function AuthPage() {
   const [isLoading, setIsLoading] = useState(false);
+
+  const navigate = useNavigate(); // Hook to navigate programmatically
+
+  const handleLoginTabChange = () => {
+    navigate(`/auth/login`); // Change URL without reloading the page
+  };
+
+  const handleRegisterTabChange = () => {
+    navigate(`/auth/signUp`); // Change URL without reloading the page
+  };
 
   const loginForm = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -106,8 +117,12 @@ export default function AuthPage() {
         <CardContent>
           <Tabs defaultValue="login" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="login">Login</TabsTrigger>
-              <TabsTrigger value="register">Register</TabsTrigger>
+              <TabsTrigger value="login" onClick={handleLoginTabChange}>
+                Login
+              </TabsTrigger>
+              <TabsTrigger value="register" onClick={handleRegisterTabChange}>
+                Register
+              </TabsTrigger>
             </TabsList>
             <TabsContent value="login">
               <Form {...loginForm}>
