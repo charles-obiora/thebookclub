@@ -105,7 +105,7 @@ userSchema.statics.login = async function (
   );
 
   if (!validatePassword) {
-    throw new Error("Password is incorrect");
+    throw new Error("Password is weak");
   }
 
   return userWithEmailExists;

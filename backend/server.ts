@@ -1,8 +1,10 @@
-//ts-nocheck
+//note: you can set a httpserver using express without manually set up a http server first and then passing the
 
 import dotenv from "dotenv";
 dotenv.config({ path: "dist/.env" });
 import morgan from "morgan";
+import { createServer } from "http";
+import { Socket, Server } from "socket.io";
 
 import express from "express";
 import cors from "cors";
@@ -13,26 +15,33 @@ import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 const port = process.env.PORT || 5000;
 console.log(port);
 
-const app = express();
+connectDB();
+
+const app = express(); // cant destructure the properties at this point because app is a special function
+
+const httpServer = createServer(app); //
+
+const { use, get, listen } = app; // at this point it acts like an object so you destructure the properties. You can read more about it
 
 app.use(express.json());
 
 console.log("REACT_APP_API_BASE_URL:", process.env.REACT_APP_API_BASE_URL); // Add this line to debug
 
 // Debugging: Log each incoming request to verify CORS middleware is applied
+// I am using morgan below for this purpose
 {
-  /*app.use((req, res, next) => {
+  /*use((req, res, next) => {
   console.log(`Incoming request: ${req.method} ${req.path}`);
   next();
 });*/
 }
 
-app.use(morgan("dev"));
-
 const allowedOrigin = process.env.REACT_APP_API_BASE_URL;
 console.log("allowedOrigin:", allowedOrigin);
 
-app.use(
+use(morgan("dev"));
+
+use(
   cors({
     origin: allowedOrigin, // Use the environment variable
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
@@ -48,25 +57,33 @@ console.log(
   process.env.REACT_APP_API_BASE_URL
 ); // Add this line to debug
 
-connectDB();
-
-app.get("/", (req, res) => {
+get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-app.use("/api/auth", userRouter);
+use("/api/auth", userRouter);
 
-// 404 page
-{
-  /*app.use((req, res) => {
-  res.status(404).render("404", { title: "404" });
-});*/
-}
+const io = new Server(httpServer, {
+  cors: {
+    origin: allowedOrigin, // Adjust based on your frontend
+  },
+});
 
-//console.log("Hello");
+io.on("connection", (socket: Socket) => {
+  console.log(`New client connected: ${socket.id}`);
 
-app.use(notFound);
-app.use(errorHandler);
-app.listen(port, () => {
+  socket.on("message", (msg: string) => {
+    console.log(`Received message: ${msg}`);
+    io.emit("message", msg); // Broadcast message to all connected clients
+  });
+
+  socket.on("disconnect", () => {
+    console.log("Client disconnected");
+  });
+});
+
+use(notFound);
+use(errorHandler);
+listen(port, () => {
   console.log(`Server is running on port: ${port}`);
 });
