@@ -4,9 +4,11 @@ import { signUpSchema, signUpData } from "@/schemas/signUpandLoginSchema";
 import useSignUp from "@/hooks/useSignUp";
 import { useState } from "react";
 import axios, { AxiosError } from "axios";
+import { useNavigate } from "react-router-dom";
 
 const SignUpForm = () => {
   const [signUpError, setSignUpError] = useState<AxiosError | null>(null);
+  const navigate = useNavigate();
 
   const signUp = useSignUp();
   const {
@@ -27,7 +29,11 @@ const SignUpForm = () => {
     console.log({ userName, email, password });
 
     try {
-      await signUp(userName, email, password);
+      const signedUpUser = await signUp(userName, email, password);
+
+      console.log(signedUpUser);
+
+      navigate("/dashboard");
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         // Log the error response from the backend

@@ -4,10 +4,12 @@ import { loginSchema, loginData } from "@/schemas/signUpandLoginSchema";
 import useLogin from "@/hooks/useLogin";
 import { useState } from "react";
 import axios, { AxiosError } from "axios";
+import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
   const [loggedInError, setloggedInError] = useState<AxiosError | null>(null);
   const login = useLogin();
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -28,6 +30,8 @@ const LoginForm = () => {
       const theLoggedInUser = await login(email, password);
 
       console.log(theLoggedInUser);
+
+      navigate("/dashboard");
 
       {
         /* the structure of an axios error response is

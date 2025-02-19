@@ -14,10 +14,12 @@ const useSignUp = () => {
 
     const { newUser, token } = data;
 
-    {
-      /*if (!newUser) {
-      throw new Error("User sign failed");
-    }*/
+    if (!newUser) {
+      throw new Error("newUser is undefined");
+    }
+
+    if (!token) {
+      throw new Error("Token is undefined");
     }
 
     localStorage.setItem(

@@ -23,13 +23,21 @@ const useLogin = () => {
       password,
     });
 
-    const { newUser, token } = data;
+    const { existingUser, token } = data;
+
+    if (!existingUser) {
+      throw new Error("Existing user is undefined");
+    }
+
+    if (!token) {
+      throw new Error("Token is undefined");
+    }
 
     localStorage.setItem(
       "user",
       JSON.stringify({
-        userName: newUser.userName,
-        email: newUser.email,
+        userName: existingUser.userName,
+        email: existingUser.email,
       })
     );
 
@@ -37,10 +45,10 @@ const useLogin = () => {
 
     dispatch({
       type: "LOGIN",
-      payload: { userName: newUser.userName, email: newUser.email },
+      payload: { userName: existingUser.userName, email: existingUser.email },
     });
 
-    return { userName: newUser.userName, email: newUser.email };
+    return { userName: existingUser.userName, email: existingUser.email };
   };
 
   return login;
