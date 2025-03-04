@@ -14,7 +14,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   CalendarDays,
-  MessageSquare,
+  //MessageSquare,
   BookOpen,
   Users,
   Search,
@@ -22,8 +22,36 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
+import { useChat } from "@/hooks/useChat";
+//import { socket } from "@/hooks/socket";
+//import { useAuthContext } from "@/hooks/authContext";
 
 export default function Dashboard() {
+  {
+    /*const sentChatHandler = () => {
+    const chatInput = document.getElementById("chat") as HTMLInputElement;
+
+    if (!chatInput.value) {
+      throw new Error("Chat input value is empty");
+    }
+
+    const chat = chatInput.value;
+
+    const senderUserName = JSON.parse(
+      localStorage.getItem("user") || ""
+    ).userName;
+
+    if (!senderUserName) {
+      throw new Error("User name not found in local storage");
+    }
+
+    socket.emit("sentChat", { senderUserName, chat });
+  };*/
+  }
+
+  const { previousChats, newChat } = useChat();
+
+  //const context = useAuthContext();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [discussions, setDiscussions] = useState([
     {

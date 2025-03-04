@@ -8,11 +8,24 @@ export const useChat = () => {
   const [newChat, setNewChat] = useState<IChat | null>(null);
 
   useEffect(() => {
-    socket.connect();
+    try {
+      const token = localStorage.getItem("token");
 
-    socket.on("con", () => {
-      console.log("Connected to server");
-    });
+      if (!token) {
+        throw new Error("Token is undefined in local storage");
+      }
+
+      socket.auth = { token: JSON.parse(token) }; // ✅ Set token dynamically
+      socket.connect(); // ✅ Now connect with auth
+
+      socket.on("con", (response) => {
+        console.log(response);
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log(error.message);
+      }
+    }
 
     // Receive past chats from server
     socket.on("storedChats", (storedChats: IChat[]) => {
@@ -21,7 +34,6 @@ export const useChat = () => {
 
     {
       /*socket.emit("sentChat", {
-      senderId,
       senderUserName,
       chat,
     });*/
@@ -41,3 +53,10 @@ export const useChat = () => {
     newChat,
   };
 };
+
+{
+  /*export const sendChat = () => {
+  const senderUserName = JSON.parse(localStorage.getItem("user")!).userName;
+  const chat = document.getElementById("chat")!.value;
+};*/
+}
