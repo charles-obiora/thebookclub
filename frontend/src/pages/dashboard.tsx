@@ -23,33 +23,40 @@ import {
   ChevronUp,
 } from "lucide-react";
 import { useChat } from "@/hooks/useChat";
+import { useRef } from "react";
 //import { socket } from "@/hooks/socket";
 //import { useAuthContext } from "@/hooks/authContext";
 
 export default function Dashboard() {
-  {
-    /*const sentChatHandler = () => {
-    const chatInput = document.getElementById("chat") as HTMLInputElement;
+  const { previousChats, sendChatFunction } = useChat();
 
-    if (!chatInput.value) {
-      throw new Error("Chat input value is empty");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const sendChatHandler = (event: React.FormEvent) => {
+    event.preventDefault();
+
+    try {
+      const activeUser = localStorage.getItem("user");
+
+      if (!activeUser) {
+        throw new Error("localStorage: user is undefined");
+      }
+
+      const { userName } = JSON.parse(activeUser);
+
+      if (!userName || !inputRef.current) {
+        throw new Error("Either the userName or input field is empty");
+      }
+
+      console.log(inputRef.current.value);
+
+      sendChatFunction(userName, inputRef.current.value);
+
+      inputRef.current.value = "";
+    } catch (error) {
+      if (error instanceof Error) console.log(error.message);
     }
-
-    const chat = chatInput.value;
-
-    const senderUserName = JSON.parse(
-      localStorage.getItem("user") || ""
-    ).userName;
-
-    if (!senderUserName) {
-      throw new Error("User name not found in local storage");
-    }
-
-    socket.emit("sentChat", { senderUserName, chat });
-  };*/
-  }
-
-  const { previousChats, newChat } = useChat();
+  };
 
   //const context = useAuthContext();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -141,33 +148,27 @@ export default function Dashboard() {
           <div className="flex-1 overflow-y-auto p-4">
             {/* Chat messages would go here */}
             <div className="space-y-4">
-              <div className="flex items-start space-x-2">
-                <Avatar>
-                  <AvatarImage src="/placeholder-avatar.jpg" alt="User" />
-                  <AvatarFallback>U1</AvatarFallback>
-                </Avatar>
-                <div className="rounded-lg bg-gray-100 p-2">
-                  <p className="text-sm">
-                    I loved the character development in chapter 3!
-                  </p>
+              {previousChats.map((chat, index) => (
+                <div className="flex items-start space-x-2" key={index}>
+                  <Avatar>
+                    <AvatarImage src="/placeholder-avatar.jpg" alt="User" />
+                    <AvatarFallback>U1</AvatarFallback>
+                  </Avatar>
+                  <div className="rounded-lg bg-gray-100 p-2">
+                    <p className="text-sm">
+                      {chat.senderUserName}: {chat.message}
+                    </p>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-start space-x-2">
-                <Avatar>
-                  <AvatarImage src="/placeholder-avatar-2.jpg" alt="User" />
-                  <AvatarFallback>U2</AvatarFallback>
-                </Avatar>
-                <div className="rounded-lg bg-gray-100 p-2">
-                  <p className="text-sm">
-                    The plot twist at the end was unexpected!
-                  </p>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
           <div className="p-4">
-            <form className="flex items-center space-x-2">
-              <Input placeholder="Type your message..." />
+            <form
+              className="flex items-center space-x-2"
+              onSubmit={sendChatHandler}
+            >
+              <Input ref={inputRef} placeholder="Type your message..." />
               <Button type="submit">Send</Button>
             </form>
           </div>
