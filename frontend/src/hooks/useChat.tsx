@@ -5,7 +5,7 @@ import { socket } from "@/hooks/socket";
 
 export const useChat = () => {
   const [previousChats, setPreviousChats] = useState<IChat[]>([]);
-  const [newChat, setNewChat] = useState<IChat | null>(null);
+  //const [newChat, setNewChat] = useState<IChat | null>(null);
 
   useEffect(() => {
     try {
@@ -32,25 +32,28 @@ export const useChat = () => {
       setPreviousChats(storedChats);
     });
 
-    {
-      /*socket.emit("sentChat", {
-      senderUserName,
-      chat,
-    });*/
-    }
-
     return () => {
       socket.disconnect(); // Clean up when component unmounts
     };
   }, []);
 
-  socket.on("newChat", (chat: IChat) => {
+  {
+    /*socket.on("newChat", (chat: IChat) => {
     setNewChat(chat);
-  });
+  });*/
+  }
+
+  const sendChatFunction = (senderUserName: string, message: string) => {
+    socket.emit("sentChat", {
+      senderUserName,
+      message,
+    });
+  };
 
   return {
     previousChats,
-    newChat,
+    //newChat,
+    sendChatFunction,
   };
 };
 
