@@ -1,5 +1,3 @@
-//note: you can set a httpserver using express without manually set up a http server first and then passing the
-
 import dotenv from "dotenv";
 dotenv.config({ path: "dist/.env" });
 import morgan from "morgan";
@@ -12,7 +10,12 @@ import connectDB from "./config/db.js";
 import userRouter from "./routers/userRouter.js";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import { ChatModel } from "./models/chatModel.js";
-import jsonwebtoken from "jsonwebtoken";
+import jsonwebtoken, { JwtPayload } from "jsonwebtoken";
+
+// Extend the default Socket interface
+interface CustomSocket extends Socket {
+  userId?: string;
+}
 
 const port = process.env.PORT || 5000;
 console.log(port);
@@ -66,7 +69,7 @@ const io = new Server(httpServer, {
   },
 });
 
-io.on("connection", (socket: Socket) => {
+io.on("connection", (socket: CustomSocket) => {
   try {
     console.log("Auth data from client:", socket.handshake.auth); // ✅ Debugging
 
@@ -82,9 +85,18 @@ io.on("connection", (socket: Socket) => {
       throw new Error("Token or secret key is not available");
     }
 
-    const decodedToken = jsonwebtoken.verify(token, process.env.SECRET_KEY);
+    const decodedToken = jsonwebtoken.verify(
+      token,
+      process.env.SECRET_KEY
+    ) as JwtPayload;
 
     console.log(decodedToken);
+
+    const { id } = decodedToken;
+
+    socket.userId = id;
+
+    console.log(socket.userId);
 
     console.log(`New client connected: ${socket.id}`);
     socket.emit("con", "Hello from the server!");
@@ -112,6 +124,9 @@ io.on("connection", (socket: Socket) => {
   retrieveChats();
 
   socket.on("sentChat", async (chat) => {
+    console.log(chat);
+    chat.senderId = socket.userId;
+    console.log(chat);
     console.log(`📩 New chat received: ${chat}`);
 
     // 1️⃣ Save message to database
