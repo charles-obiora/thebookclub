@@ -1,10 +1,10 @@
-import { useAuthContext } from "./AuthStateContext"; // Import the useAuthContext hook
+import { useAuthState } from "./AuthStateContext"; // Import the useAuthContext hook
 import { useNavigate } from "react-router-dom"; // Import the useNavigate hook from react-router-dom
 
 // Define the UseLogout hook
 const UseLogout = () => {
   // Get the dispatch function from the auth context
-  const { dispatch } = useAuthContext();
+  const { dispatch } = useAuthState();
 
   // Get the navigate function from react-router-dom
   const navigate = useNavigate();

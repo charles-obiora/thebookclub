@@ -17,6 +17,7 @@
     "@radix-ui/react-tabs": "^1.1.1",
     "@types/axios": "^0.14.4",
     "axios": "^1.7.9",
+    "backend": "file:../backend",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "lucide-react": "^0.456.0",
