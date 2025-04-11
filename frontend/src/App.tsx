@@ -1,6 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import AuthhPage from "./pages/AuthhPage";
-import Dashboard from "./pages/DashBoard";
+import AuthhPage from "./pages/AuthhPage.tsx";
+import Dashboard from "./pages/DashBoard.tsx";
 
 function App() {
   const routes = createBrowserRouter([
