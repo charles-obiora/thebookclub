@@ -5,8 +5,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build_frontend": "npm install --prefix ../frontend",
-    "build_backend": "tsx --config tsconfig.json --dist server.ts",
+    "build_backend": "tsc && node dist/server.js",
     "start": "node dist/server.js",
     "server": "nodemon",
     "client": "npm run dev --prefix ../frontend",
