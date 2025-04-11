@@ -26,9 +26,14 @@ import { useChat } from "@/hooks/useChat";
 import { useRef } from "react";
 //import { socket } from "@/hooks/socket";
 //import { useAuthContext } from "@/hooks/authContext";
+import { useChatContext } from "../hooks/useChatContext";
 
 export default function Dashboard() {
-  const { previousChats, sendChatFunction } = useChat();
+  const { sendChatFunction } = useChat();
+
+  const context = useChatContext();
+
+  const { chat } = context;
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -57,6 +62,8 @@ export default function Dashboard() {
       if (error instanceof Error) console.log(error.message);
     }
   };
+
+  // Function to get all chats (e.g., from an API or database)
 
   //const context = useAuthContext();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -148,7 +155,7 @@ export default function Dashboard() {
           <div className="flex-1 overflow-y-auto p-4">
             {/* Chat messages would go here */}
             <div className="space-y-4">
-              {previousChats.map((chat, index) => (
+              {chat.map((chat, index) => (
                 <div className="flex items-start space-x-2" key={index}>
                   <Avatar>
                     <AvatarImage src="/placeholder-avatar.jpg" alt="User" />

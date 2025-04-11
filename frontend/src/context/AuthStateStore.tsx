@@ -1,8 +1,8 @@
 import { useReducer, ReactNode, useEffect } from "react";
 
-import { authContext } from "@/hooks/authContext";
+import { AuthState } from "@/hooks/AuthStateContext";
 
-interface AuthState {
+interface AuthStateType {
   user: { userName: string; email: string } | null;
 }
 
@@ -12,9 +12,9 @@ interface AuthAction {
 }
 
 export const AuthReducer = (
-  state: AuthState,
+  state: AuthStateType,
   action: AuthAction
-): AuthState => {
+): AuthStateType => {
   switch (action.type) {
     case "LOGIN":
       return { user: action.payload || null };
@@ -27,7 +27,8 @@ export const AuthReducer = (
   }
 };
 
-export const AuthContextStore = ({ children }: { children: ReactNode }) => {
+//called AuthStateStore instead of AuthContextStore for easy understanding
+export const AuthStateStore = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(AuthReducer, { user: null });
 
   console.log(`Current state: ${state}`);
@@ -43,8 +44,8 @@ export const AuthContextStore = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <authContext.Provider value={{ ...state, dispatch }}>
+    <AuthState.Provider value={{ ...state, dispatch }}>
       {children}
-    </authContext.Provider>
+    </AuthState.Provider>
   );
 };

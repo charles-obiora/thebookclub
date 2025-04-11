@@ -1,8 +1,8 @@
 import axios from "axios";
-import { useAuthContext } from "./authContext";
+import { useAuthState } from "./AuthStateContext";
 
 const useLogin = () => {
-  const { dispatch } = useAuthContext();
+  const { dispatch } = useAuthState();
 
   {
     /* the structure of an axios success response is

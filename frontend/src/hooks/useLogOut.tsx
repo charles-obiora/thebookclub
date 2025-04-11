@@ -1,4 +1,4 @@
-import { useAuthContext } from "./authContext"; // Import the useAuthContext hook
+import { useAuthContext } from "./AuthStateContext"; // Import the useAuthContext hook
 import { useNavigate } from "react-router-dom"; // Import the useNavigate hook from react-router-dom
 
 // Define the UseLogout hook

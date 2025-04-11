@@ -1,8 +1,8 @@
 import axios from "axios";
-import { useAuthContext } from "./authContext";
+import { useAuthState } from "./AuthStateContext";
 
 const useSignUp = () => {
-  const { dispatch } = useAuthContext();
+  const { dispatch } = useAuthState();
   const signUp = async (userName: string, email: string, password: string) => {
     const { data } = await axios.post("http://localhost:4000/api/auth/signUp", {
       userName,

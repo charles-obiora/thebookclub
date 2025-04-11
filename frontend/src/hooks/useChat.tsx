@@ -1,11 +1,18 @@
 // socket.ts (WebSocket Setup)
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { IChat } from "@/types/types";
 import { socket } from "@/hooks/socket";
+import { useChatContext } from "./useChatContext";
 
 export const useChat = () => {
-  const [previousChats, setPreviousChats] = useState<IChat[]>([]);
+  //const [previousChats, setPreviousChats] = useState<IChat[]>([]);
   //const [newChat, setNewChat] = useState<IChat | null>(null);
+
+  const context = useChatContext();
+
+  console.log(context, "the context");
+
+  const { dispatch } = context;
 
   useEffect(() => {
     try {
@@ -29,7 +36,8 @@ export const useChat = () => {
 
     // Receive past chats from server
     socket.on("storedChats", (storedChats: IChat[]) => {
-      setPreviousChats(storedChats);
+      dispatch({ type: "GET_CHATS", payload: storedChats });
+      //setPreviousChats(storedChats);
     });
 
     return () => {
@@ -37,11 +45,9 @@ export const useChat = () => {
     };
   }, []);
 
-  {
-    /*socket.on("newChat", (chat: IChat) => {
-    setNewChat(chat);
-  });*/
-  }
+  socket.on("newChat", (newChat: IChat) => {
+    dispatch({ type: "ADD_CHAT", payload: newChat });
+  });
 
   const sendChatFunction = (senderUserName: string, message: string) => {
     socket.emit("sentChat", {
@@ -51,7 +57,7 @@ export const useChat = () => {
   };
 
   return {
-    previousChats,
+    //previousChats,
     //newChat,
     sendChatFunction,
   };

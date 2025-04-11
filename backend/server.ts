@@ -134,7 +134,7 @@ io.on("connection", (socket: CustomSocket) => {
     await newChat.save();
 
     // 2️⃣ Broadcast the message to all connected clients
-    io.emit("newChat", chat);
+    io.emit("newChat", newChat);
 
     // 3️⃣ Send confirmation to sender only
     socket.emit("messageStatus", { status: "delivered", message: chat });
